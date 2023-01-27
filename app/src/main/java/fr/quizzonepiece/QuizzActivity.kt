@@ -1,8 +1,8 @@
 package fr.quizzonepiece
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.content.Intent
 
 import android.widget.Button
 import android.widget.TextView
@@ -10,16 +10,15 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 
-import org.w3c.dom.Text
 import android.util.Log;
-import androidx.constraintlayout.widget.Group
-import kotlin.system.exitProcess
 
 
-class Quizz : AppCompatActivity() {
+class QuizzActivity : AppCompatActivity() {
 
     private lateinit var CheckBoxSelected: RadioButton
     private lateinit var idCheckBoxSelected:Number
+    private lateinit var nextActivity:Intent
+    val data = Data()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +26,11 @@ class Quizz : AppCompatActivity() {
         setContentView(R.layout.activity_quizz)
 
         // Récupération des variableExtra
-        val question:String = intent.getStringExtra("question").toString()
+        val question = intent.getStringExtra("question")
         val answerPosssible = intent.getStringArrayListExtra("answerPossible")
-        var answer = intent.getStringExtra("answer").toString()
-
+        var answer = intent.getStringExtra("answer")
+        var step = intent.getIntExtra("step", 0)
+        var result = intent.getIntExtra("result", 0)
 
         // Récupération des Input par ID
         val textQuestion: TextView = findViewById(R.id.question)
@@ -55,7 +55,6 @@ class Quizz : AppCompatActivity() {
             idCheckBoxSelected = radioGroup.checkedRadioButtonId
 
             if (idCheckBoxSelected ==-1) {
-                // Todo Diplay Toat "answer not selected"
                 Toast.makeText(this,
                     "Aucune réponse séléctionné", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -63,20 +62,29 @@ class Quizz : AppCompatActivity() {
 
             CheckBoxSelected = findViewById(idCheckBoxSelected.toInt())
             Log.d("answerSelected", CheckBoxSelected.text.toString())
-            Log.d("answer", answer)
+            //Log.d("answer", answer)
             if(CheckBoxSelected.text.toString() == answer){
-                // Todo Diplay Toat "Good Answer"
-                Toast.makeText(this,
-                    "Bonne réponse", Toast.LENGTH_SHORT).show()
-                Log.d("resultQuizz", "Good Answer !")
-
+                Toast.makeText(this,"Bonne réponse", Toast.LENGTH_SHORT).show()
+                result ++
             }
             else{
-                // Todo Diplay Toat "Bad Answer"
-                Log.d("resultQuizz", "Bad Answer !")
-                Toast.makeText(this,
-                    "Mauvaise réponse", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Mauvaise réponse", Toast.LENGTH_SHORT).show()
             }
+
+            step ++
+            if(step == 3){
+                nextActivity = Intent(this, ResultActivity::class.java)
+            }
+            else nextActivity = Intent(this, QuizzActivity::class.java)
+            Log.d("step",step.toString())
+
+            nextActivity.putExtra("question", data.question.get(step))
+            nextActivity.putExtra("answerPossible", data.answerPossible.get(step))
+            nextActivity.putExtra("answer", data.answer.get(step))
+            nextActivity.putExtra("step", step)
+            nextActivity.putExtra("result", result)
+
+            startActivity(nextActivity)
         }
     }
 }

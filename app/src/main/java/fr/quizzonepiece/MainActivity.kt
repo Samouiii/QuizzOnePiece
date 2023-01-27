@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 
+
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -11,11 +12,20 @@ class MainActivity : AppCompatActivity() {
 
         val buttonStart : Button = findViewById(R.id.button_start);
         buttonStart.setOnClickListener {
+
+            val data = Data()
+
             // your code to perform when the user clicks on the button
-            val quizzActivity = Intent(this, Quizz::class.java)
-            quizzActivity.putExtra("question", "Quel personnage n'est pas un grand corsaire ?")
-            quizzActivity.putExtra("answerPossible", arrayListOf("Jimbe", "Boa Hancock", "Barbe Blanche", "Mihawk"))
-            quizzActivity.putExtra("answer", "Barbe Blanche")
+            val quizzActivity = Intent(this, QuizzActivity::class.java)
+
+
+            quizzActivity.putExtra("question", data.question.get(0))
+            quizzActivity.putExtra("answerPossible", data.answerPossible.get(0))
+            quizzActivity.putExtra("answer", data.answer.get(0))
+            quizzActivity.putExtra("step", 0)
+            quizzActivity.putExtra("result", 0)
+
+
             startActivity(quizzActivity)
         }
     }
